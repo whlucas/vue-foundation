@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        Vue的性能好在哪
+        操作DOM影响性能
+
+        DOM是独立于语言的,是用于操作XML和HTML文档的程序接口(API).也就是js(确切说是es)通过DOM获得文档中的数据
+
+        DOM是一个与语言无关的API,其他语言也可以操作DOM,比如python, 但DOM在浏览器中的接口使用js实现的
+
+        客户端的编程大部分都是在和页面打交道,所以DOM就成为现在JS编码中的重要部分
+
+        浏览器中通常会把DOM和js独立实现,他们各自的引擎也是独立的
+
+        为什么操作DOM影响性能?
+        JS和DOM是两种东西,每次链接都需要消耗性能
+
+        操作DOM会导致重排和重绘:
+        浏览器下载完页面中的所有组件：HTML、JavaScript、CSS、图片后，会发生这样的过程：
+        1. 解析HTML，构建DOM树
+        2. 解析CSS，生成CSS规则树 也叫CSSOM树
+        3. 合并DOM树和CSS规则树，生成render树
+        4. 布局render树，负责各元素尺寸、位置的计算
+        5. 绘制render树，绘制页面像素信息
+        6. 浏览器会将各层的信息发送给GPU，GPU将各层合成
+
+        生成render树的过程
+        (1)从DOM树的根节点开始遍历每一个可见节点
+        什么是不可见节点:比如meta和link,和css属性进行隐藏的结点(display:none)
+        (2)对于每一个可见节点找到CSSOM树当中的规则去运用他们
+        (3)根据每一个可见节点和他对应的样式生成render树
+
+        什么时候会发生重排和重绘
+        当DOM的变化影响了元素的几何属性（宽和高），浏览器需要重新计算元素的几何属性，同样其他元素的几何属性和位置也会因此受到影响。浏览器会使渲染树中受到影响的部分失效，并重新构造渲染树。这个过程称为重排，完成重排后，浏览器会重新绘制受影响的部分到屏幕中，该过程称为重绘。
+
+        什么时候触发重排？
+        当页面布局和几何属性改变时就需要重排：
+        1. 添加或删除可见的DOM元素。
+        2. 元素位置改变
+        3. 元素尺寸改变( 外边距、内边距、边框厚度、宽度、高度等)
+        4. 内容改变，例：文本改变或图片被另一个不同尺寸的图片替代
+        5. 页面渲染器初始化
+        6. 浏览器窗口尺寸改变
+        各css属性对重排重绘的影响：https://csstriggers.com/
+
+        当我们操作属性的时候会破坏浏览器对于重排重绘的优化(积攒一段时间统一处理),直接出发重排,因为我现在就想知道元素的宽度,但是这个元素的最新样式可能还在队列里面等着不会被执行,但是我要了他就需要立马执行的到最新的任务
+        offsetTop、offsetLeft、offsetWidth、offsetHeight
+        scrollTop、scrollLeft、scrollWidth、scrollHeight
+        clientTop、clientLeft、clientWidth、clientHeight
+        getComputedStyle()
+
+
+
+
+
+
+    </body>
+</html>
