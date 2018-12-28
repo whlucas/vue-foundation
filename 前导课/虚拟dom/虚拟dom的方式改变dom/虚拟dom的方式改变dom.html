@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            ul li span {
+                display: inline-block;
+                width: 100px;
+                line-height: 50px;
+                text-align: center;
+            }
+
+            ul li span:last-of-type {
+                width: 300px;
+            }
+
+            #button {
+                width: 100px;
+                line-height: 40px;
+                background-color: #bbda2f;
+                color: #fff;
+                outline: none;
+                border: none;
+                margin-left: 200px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="container"></ul>
+        <button id="button">更改职业</button>
+
+        引入js文件的一种方式: 百度搜索BootCDN,在里面搜你想要引入的文件,这里在里面搜索snabbdom,引入snabbdom.js文件的路径
+        <script src="https://cdn.bootcss.com/snabbdom/0.7.3/snabbdom.js"></script>
+
+        <script>
+            // 在github上面搜索snabbdom,在inline example里面可以看一下snabbdom的用法
+            // 初始化一些snabbdom需要用到的东西
+            const patch = snabbdom.init([]); // 因为我们就改一下文字,用不到一些其他的效果,所以这个init里面不用传参数
+            const h = snabbdom.h;
+            let vNode = null; // 用来判断是第一次添加,还是之后需要修改
+
+            // 拿到dom元素
+            const oContainer = document.getElementById('container');
+            const oButton =document.getElementById('button');
+
+            const dataList = [
+                {
+                    name: 'shan',
+                    age: 18,
+                    profession: '讲师'
+                },
+                {
+                    name: 'jc',
+                    age: 22,
+                    profession: '自称华语最帅男讲师'
+                },
+                {
+                    name: 'cst',
+                    age: 20,
+                    profession: '从前是高瘦帅的，现在是胖讲师'
+                },
+                {
+                    name: 'dxm',
+                    age: 88,
+                    profession: '渡一教具，哪都有他'
+                }
+            ];
+
+            function getData (dataList){
+                const liArr = []; // 准备h方法里面的第三个参数
+
+                dataList.forEach(item => {
+                    const li = h('li', {}, [
+                        h('span', {}, [item.name]),
+                        h('span', {}, [item.age]),
+                        h('span', {}, [item.profession])
+                    ]);
+                    liArr.push(li);
+                });
+
+                // h函数用来建虚拟dom
+                const newVNode = h("ul#container", {}, liArr); // 这里传的第二个参数就是这个div的一些属性,这里没有,第三个参数里面穿的是由一个个h函数组成的一个数组,用来模拟dom,我在上面来生成好这么一个数组放到里面
+
+                // patch函数如果第一个参数是一个dom的话就拿后面的这个虚拟dom往里面插入,如果第一个参数不是dom的话就是后面的虚拟dom更新前面的内容
+                if(vNode){ // 如果他有值就说明需要跟新
+                    patch(vNode, newVNode)
+                }else{ // 没有值就新建插入
+                    patch(oContainer, newVNode);
+                }
+
+                // 更新一下每一次的vNode
+                vNode = newVNode;
+            }
+
+            getData(dataList);
+
+            oButton.onclick = function () {
+                dataList[0].profession = '可能是宇宙最美讲师了';
+                dataList[1].profession = '杉杉的擦桌工';
+                dataList[2].profession = '杉杉的倒水工';
+                dataList[3].profession = '杉杉的擦鞋工';
+                getData(dataList);
+            }
+        </script>
+
+    </body>
+</html>

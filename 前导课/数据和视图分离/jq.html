@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="./jquery.js"></script>
+    </head>
+    <body>
+        <div id="container">
+            <input type="text">
+            <button>提交</button>
+            <ul id="list"></ul>
+        </div>
+        <script>
+            const $inp = $('input');
+            const $button = $('button');
+            const $ul = $('#list');
+
+            // 点击button的时候获取input里面的值然后放到li里面加入到ul里面去
+            $button.on('click', () => {
+                addList();
+            });
+
+            // 我想让输入回车也可以添加数据
+
+            // 监听一个keyup事件
+            $inp.on("keyup", e => {
+                if(e.keyCode !== 13){ // 如果没按的不是回车就啥也不干
+                    return;
+                }
+                addList()
+            });
+
+            // 插入值的函数
+            function addList() {
+                const value = $inp.val();
+                $ul.append(`<li>${value}</li>`);
+                $inp.val(''); // 清空输入框里面的内容
+            }
+        </script>
+    </body>
+</html>
