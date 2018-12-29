@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <!--在双括号里面可以进行一些运算,比如加运算,三目运算-->
+        <!--{{true ? name : 'duyi'}}-->
+        <div id="app">{{name + '0' + '1'}}
+            <!-- vue在dom里面绑定事件用v-on:事件名称="触发函数名称" -->
+            <button v-on:click="changeName">点击</button> <!-- 这个触发的事件名称写在vue里面的methods里面 -->
+        </div>
+
+
+        <script>
+            // 进入vue中文官网: https://cn.vuejs.org/
+            // 点起步,里面给我们提供了两个引入vue的链接,一个是开发环境的,写代码的时候用,一个是生产环境的,压缩后的
+
+            new Vue({ // 实例化一个vue,传入一个键值对
+                el: '#app',     // 第一个属性element, 填写一个元素,填写什么元素,什么元素就可以用vue的语法,这个dom就被vue所接管
+                data:{  // 在这个里面写的数据是可以在dom中拿来使用的
+                    name: 'shanshan'  // 我想在dom中使用这个name就直接{{name}},这个dom必须是被vue接管的dom
+                },
+                methods: { // 如果在dom里面碰到要执行的函数了,我就来这个对象里面找
+                    changeName() {
+                        console.log('1');
+                        // 我希望在点击的时候能够改变我数据当中的值
+                        // 直接this.name就能获取的到name
+                        this.name = this.name + '1'; // 发现当数据当中的值改变了的时候dom里面的值也跟着改变
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
