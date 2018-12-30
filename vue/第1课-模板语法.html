@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
@@ -11,17 +11,31 @@
         <div id="app">{{name + '0' + '1'}}
             <!-- vue在dom里面绑定事件用v-on:事件名称="触发函数名称" -->
             <button v-on:click="changeName">点击</button> <!-- 这个触发的事件名称写在vue里面的methods里面 -->
+
+            <!-- 我想要在html的特性里面去使用我下面的data -->
+            <!--要用这种方式引入v-bind:id=""-->
+            <a v-bind:href="url">Vue</a>
+
+            <!--我想要在这里插入一个我数据里面的html标签,需要他自动帮我解析成html文档-->
+            <!--在一个标签的里面用这个 v-html="数据名"-->
+            <!--如果我使用v-text,就和{{}}一样是直接把数据解析成文本放进来-->
+            <p v-html="tag"></p>
         </div>
 
+        <!--一些简写:-->
+        <!--v-bind:href => :href-->
+        <!--v-on:click => @click-->
 
         <script>
             // 进入vue中文官网: https://cn.vuejs.org/
             // 点起步,里面给我们提供了两个引入vue的链接,一个是开发环境的,写代码的时候用,一个是生产环境的,压缩后的
 
             new Vue({ // 实例化一个vue,传入一个键值对
-                el: '#app',     // 第一个属性element, 填写一个元素,填写什么元素,什么元素就可以用vue的语法,这个dom就被vue所接管
+                el: '#app', // 第一个属性element, 填写一个元素,填写什么元素,什么元素就可以用vue的语法,这个dom就被vue所接管
                 data:{  // 在这个里面写的数据是可以在dom中拿来使用的
-                    name: 'shanshan'  // 我想在dom中使用这个name就直接{{name}},这个dom必须是被vue接管的dom
+                    name: 'shanshan',  // 我想在dom中使用这个name就直接{{name}},这个dom必须是被vue接管的dom
+                    url: 'https://cn.vuejs.org/', // 我在这里写一个url数据
+                    tag: '<span>我是一个span标签</span>' // 我在这写一个标签,能不能直接解析成dom元素
                 },
                 methods: { // 如果在dom里面碰到要执行的函数了,我就来这个对象里面找
                     changeName() {

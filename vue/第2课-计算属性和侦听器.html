@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <!--上节课插入数据的方式-->
+        <div id="app">{{name + ' ' + looks}}</div>
+
+        <!--不能这么写,因为写了{{}}他就会去data里面去找有没有这个数据,找到了就去替换,这样的话找到了describe,但是describe是字符串,没法执行,data里面找完了没有,才会去找methods-->
+        <!--所以我这个data里面的属性名不能和methods里面的函数名名字一样,会造成冲突-->
+        <!--但是这样会造成只要页面的数据改变这个函数就会执行,太耗性能-->
+        <div id="app1">{{describe()}}</div>
+
+        <!--用watch监听实现,先在data里面写一个describe属性,当相关属性变得时候就在监听的方法里面改变describe的值-->
+        <!--但是这么写这个describe数据就冗余了-->
+        <div id="app2">{{describe}}</div>
+
+        <!--用computed属性实现-->
+        <div id="app3">{{describe}} {{age}}</div>
+        <script>
+
+            const vm = new Vue({
+                el: '#app3',
+                data: {
+                    name: "杉杉",
+                    looks: "beautiful",
+                    age: 18
+                    // describe: "杉杉 beautiful" // 如果我不想用字符串拼接的方式引入数据,就可以直接引入这个拼接好的变量,但是这一条数据就很冗余,他是由上面两个拼起来的,而且当上面两条数据变化的时候,我还得改变这一条数据
+                },
+
+                // 如果我只想传一个变量就可以代表上面这两条属性,且避免上面的问题
+                /*methods: {
+                    // 用methods来定义方法,在{{}}中引入方法名执行来添加,这样就可已解决上面的两个问题,但是注意,需要保证data当中的属性名和methods中的属性用法不一样
+                    describe(){
+                        return this.name + ' ' + this.looks
+                    }
+                }, // 就不写在methods里面了,写在methods里面页面里面渲染的数据一动,这个方法就会被执行,写在watch*/
+
+                // watch:{
+                //     // 需要在data里面定义一个初始的describe属性
+                //     // 当name数据值改变的时候就执行这个对应名字的函数
+                //     name(){
+                //         this.describe = this.name + ' ' + this.looks
+                //     },
+                //
+                //     // 当looks数据值改变时候就执行这个looks函数
+                //     looks() {
+                //         this.describe = this.name + ' ' + this.looks
+                //     }
+                // }, // 但是我这么写出现了非常相似的两行代码,且describe这个数据是冗余的
+
+                // 用computed实现,在这个里面可以定义一些个值,可以避免上面提到的所有问题
+                // 只有计算属性所涉及的数据发生改变的时候这个函数才会被执行一次
+                computed:{
+                    // 这个里面是用函数的方式来定义
+                    // describe(){
+                    //     // 让他返回我拼接好的值
+                    //     return this.name + ' ' + this.looks
+                    // }
+
+                    // 他除了用对象的方式来定义之外还可以用函数的方式来定义
+                    // 对象名就是dom获得的数据名
+                    describe:{
+                        // 在这个对象里面有一个get方法,这个get方法就是获得这个describe数据的时候调用的方法
+                        get() {
+                            return this.name + ' ' + this.looks
+                        },
+
+                        // 他里面还有个set方法,只的是在外面设置这个describe值的时候就会执行这个方法
+                        set(value) { // 里面可以传一个参数,这个set就是我在修改describe的时候传入的值比如vm.describe='邓哥 ugly'
+                            console.log('set');
+                            // 我通过拿到这个value值,可以在set里面来修改name和looks数据从而改变dom里面的值
+                            const arr = value.split(' ');
+                            this.name = arr[0];
+                            this.looks = arr[1];
+                            if(arr[0] === "邓哥"){
+                                this.age = 88;
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 我们可以直接用我实例化出来的对象来取到我定义地数据和方法,从而进行重新赋值
+            vm.name = '邓哥'; // 通过测试发现,当我这个页面中所用到的数据发生改变时候,这个方法会被自动执行,自动更新dom里面的数据
+            // 但是这样不太好,我这个函数里面用到的数据没有变,我不想让他执行,太耗性能
+            // 我想要监听到某一个属性的变化,然后对其进行处理,用vue里面的一个属性watch
+            // 在watch里面写上监听数据变化的方法就可以那个属性变了就执行哪个函数
+        </script>
+    </body>
+</html>
