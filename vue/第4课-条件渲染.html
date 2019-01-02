@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <style>
+            p {
+                width: 100px;
+                line-height: 100px;
+                text-align: center;
+                color: #fff;
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <button @click="showOrHide">显示/隐藏</button>
+            <!-- 在标签里的属性中设置v-if="true/false"来控制这个标签的显示和隐藏,true是显示,false是隐藏 -->
+            <!-- 但是我如果用这个属性的话,隐藏就是完全的把这个标签删掉,如果需要频繁的进行隐藏和显示的话会降低性能-->
+            <p v-if="show">杉杉111</p>
+
+            <!--有v-if就又v-else,它会智能的根据v-if所在的元素的状态进行切换,v-if显示,v-else就隐藏,v-if隐藏,v-else就显示-->
+            <!--但是v-if和v-else这两个元素之间不能有其他的元素,有就报错-->
+            <p v-else>杉杉222</p>
+
+            <!--还有一种是v-if和v-else-if,他们两个也必须要紧挨着才好使-->
+            <p v-if="show2 === 1">杉杉333</p>
+            <p v-else-if="show2 === 2">杉杉444</p>
+
+            <!--如果需要频繁的进行隐藏和显示的切换的话就可以用v-show-->
+            <!--他和v-if的使用相同,但是他不是直接把标签去掉,是给这个标签加一个display-none属性,能优化一些性能-->
+            <p v-show="show">杉杉555</p>
+
+
+            <!-- v-if和v-else让两块代码切换 -->
+            <!--但是这个在实际浏览区渲染的时候,当我点击切换的时候,浏览器为了节约性能会复用之前的那个input框,不会给我新创建一个新的input框,导致我在上一个input框里面写的东西在切换的之后不会删掉,还会继续存在-->
+            <div v-if="show">
+                <span>用户名</span>
+                <!--解决办法,在标签里面给他们都写一个key属性,这样浏览器就知道他们不一样了,就不会给复用了-->
+                <input type="text" key="username">
+            </div>
+
+            <div v-else>
+                <span>密码</span>
+                <input type="text" key="password">
+            </div>
+
+        </div>
+
+        <script>
+            const vm = new Vue({
+                el: '#app',
+                data: {
+                    show: true,
+                    show2: 1
+                },
+                methods:{
+                    showOrHide() {
+                        this.show = !this.show
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

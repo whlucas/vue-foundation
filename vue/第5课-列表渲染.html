@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                list-style: node;
+            }
+            ul{
+                margin: 100px;
+            }
+            li{
+                line-height: 30px;
+            }
+            p{
+                display: inline-block;
+            }
+            span{
+                border: 1px solid red;
+                color: red;
+                padding: 2px;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <ul>
+                <!--列表渲染用v-for循环-->
+                <!--最好配合着key属性来使用,方便浏览器来复用dom节省性能,绑定key属性依然用:key-->
+                <li v-for="item in newsList" :key="item.id">
+                    <p>{{item.title}}</p>
+                    <!--这个新只有item.new为true的时候显示-->
+                    <span v-if="item.new">新</span>
+                </li>
+            </ul>
+
+
+            <!--利用v-for插入对象里面的数据-->
+            <!--注意我()里面的顺序不能变,就是第一项value,第二项key,第三项index-->
+            <div v-for="(value, key, index) in userInfo">{{value}} -- {{key}} -- {{index}} </div>
+
+            <!--给我们提供了一个标签,专门针对v-for进行对数据的渲染-->
+            <!--好处是渲染之后我这个最外面的标签就没了-->
+            <!--这个template不能有key值-->
+            <ul>
+                <template v-for="item in newsList">
+                    <p>{{item.title}}</p>
+                    <span v-if="item.new">新</span>
+                </template>
+            </ul>
+        </div>
+
+        <script>
+            const vm = new Vue({
+                el: '#app',
+                data: {
+                    newsList: [
+                        {
+                            title: "张柏芝第三胎生父",
+                            new: true,
+                            id: 0
+                        },
+                        {
+                            title: "被约谈艺人名单",
+                            new: false,
+                            id: 1
+                        },
+                        {
+                            title: "弑母男孩指认现场",
+                            new: false,
+                            id: 2
+                        },
+                        {
+                            title: "任贤齐胖到200斤",
+                            new: false,
+                            id: 3
+                        },
+                        {
+                            title: "韩国解说员流鼻血",
+                            new: true,
+                            id: 4
+                        },
+                    ],
+                    userInfo:{
+                        name: 'shanshan',
+                        age: 18
+                    }
+                }
+            });
+
+            // 改变数据里面的值dom里面可以更新
+            vm.newsList[0].title="爱的发达所发生的";
+
+            // 我给他新添加一条数据,他不会自动的添加进去,vue不会监听到变动的数组,所以就不会更新视图
+            vm.newsList[5] = {title:'爱打架师范', new: true, id: 5};
+            // vue给我们提供了一些数组的变异方法,用这些方法去更新数组就会触发视图的根新,这些方在vue文档里面可以查到
+            // 比如这里用push方法去添加一项
+            vm.newsList.push({title:'爱打架师范', new: true, id: 6});
+
+            // 用数组的方式按照索引插入一项
+            vm.newsList.splice(7, 1, {title:'爱打架师范', new: true, id: 7}); //第一个值填索引,第二个值表示加入一项,第三个加入的值
+
+            // 如果不想用数组,想通过索引去修改值,两种方法
+            // 第一种直接Vue.set(vm.items, indexOfItem, newValue)
+            // 第二种用实例出来的对象vm.$set(vm.items, indexOfItem, newValue)
+            Vue.set(vm.newsList,8,{title:'爱打架师范', new: true, id: 8}); // 第一个是我需要改变的数据,第二个是我要改变的索引,第三个我要修改的数据
+            vm.$set(vm.newsList,9,{title:'爱打架师范', new: true, id: 9});
+
+
+            // 还有一个更新数组里面数据的方法是替换数组,原理是当这个数组的地址被改变的时候视图就会被更新，详见官方文档
+
+
+            // 利用v-for对对象进行循环,改变里面的值
+            vm.userInfo.age = 16; // 这样视图是可以更新的
+            vm.userInfo.sex = 'female'; // 我给它添加一项它就不会进行视图的更新,和数组类似
+
+            // 如何处理?
+            // 暴力模式:和数组类似,给他一个新的引用的指向就可以更新了
+            vm.userInfo = {sex: 'girl'};
+
+            // 正常方法
+            // Vue.set(object, key, value)
+            // 或者vm.$set()和上面一样
+            Vue.set(vm.userInfo, 'age', 18)
+
+
+            // 最后注意一点,在同一个标签中v-for的优先级比v-if更高，这意味着v-if将分别重复运行于每个v-for循环中,如果我的目的是有条件地跳过循环的执行那么可以将v-if置于外层元素
+            /*<ul v-if="todos.length">
+                <li v-for="todo in todos">
+                {{ todo }}
+            </li>
+            </ul>*/
+        </script>
+    </body>
+</html>

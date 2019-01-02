@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <style>
+            p {
+                width: 100px;
+                line-height: 100px;
+                text-align: center;
+                color: #fff;
+                background-color: red;
+            }
+
+            p.active{
+                background-color: pink;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <!--我想在html标签的特性里面写入数据,就要用v-bind:,简写为:-->
+            <!--因为我用了:, 所以在html的特性可以使用我下面的数据-->
+            <!--在这个p上绑定一个事件用v-on缩写为@, 通过改变数据里面activeBool的值来控制-->
+
+            <!--我这个p标签中绑定class属性""里面可以填两种值{} / []-->
+            <!--如果填的是对象对象的情况, 对象里面的key值对应着我要绑定的class的名字,value值是一个bool值决定这个key值能不能被绑定-->
+            <!--如果填的是数组,数组里面如果填的是字符串,那这个字符串就是要绑定的类名,如果填的是数据,就从data里面找到数据作为类名-->
+            <p :class="{active: activeBool}" @click="changeColor">杉杉</p>
+
+            <!--这样可以通过改变数据里面active的值来控制-->
+            <p :class="[active]" @click="changeColor1">杉杉</p>
+
+            <!--除了改变绑定class可以改变样式,绑定style也可以改变样式-->
+            <!--一样是:style的形式, 里面可以填对象也可以填数组-->
+            <!--如果是对象,就是填写我们要给他改变的样式,注意value值要写成字符串类型,带着-的key值有两种写法,一种是写成字符串的形式,一种是写成小驼峰-->
+            <p :class="[active]"
+               :style="{width: '200px','line-height': '200px'}">杉杉</p>
+
+            <!--也可以在data里面写一个对象在dom里面来绑定-->
+            <p :class="[active]"
+               :style="styleObj">杉杉</p>
+
+            <!--如果我要在style里面绑定多个样式数据,就要用数组的形式-->
+            <p :class="[active]"
+               :style="[styleObj,colorStyleObj]">杉杉</p>
+        </div>
+
+        <script>
+
+            const vm = new Vue({
+                el: '#app',
+                data:{
+                    activeBool: false,
+                    active: 'active',
+                    styleObj: {
+                        width: '200px',
+                        lineHeight: '200px'
+                    },
+                    colorStyleObj:{
+                        backgroundColor: 'yellow'
+                    }
+                },
+                // 函数在这个里面写
+                methods:{
+                    // 这里是es6中对象里面函数的简写
+                    changeColor(){
+                        this.activeBool = !this.activeBool; // 执行这个函数的时候这个bool值取反
+                    },
+                    // 改变数据中active的值来绑定class
+                    changeColor1(){
+                        this.active = this.active === 'active' ? '' : 'active';
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
