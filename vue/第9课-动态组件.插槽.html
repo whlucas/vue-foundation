@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <button @click="changeCmp">切换</button>
+
+            <!--用v-if实现组件切换的功能,利用data里面定义一个数据来驱动切换,利用button里面的click来改变数据的状态,切换组件-->
+            <!--<cmp-one v-if="showOne"></cmp-one>-->
+            <!--<cmp-two v-else></cmp-two>-->
+
+            <!--另外一种切换组件的方式:动态组件-->
+            <!--component标签里面的is属性是哪个这个标签就变成哪个组件-->
+            <!--我们可以动态的改变this的值来让这个标签变成不同的组件-->
+
+
+            <!--我现在想要达到一个效果就是,当我这个组件切换回来的时候,还是我上次切换时的状态,不会改变-->
+            <!--用keepalive标签来实现,把需要保持状态的标签放到这个标签里面就行-->
+            <!--<keep-alive>-->
+                <!--<conponent :is="type"></conponent>-->
+            <!--</keep-alive>-->
+
+
+            <!--由于我在组件1里面放了插槽,所以我在这个组件1里面写新的标签的时候这个标签就会放到我组件1中设置的插槽的位置-->
+            <cmp-one v-if="showOne">
+                <span>插槽</span>
+                <!--插入到指定的插槽名中去-->
+                <span slot="after">插槽</span>
+                <span slot="before">插槽</span>
+            </cmp-one>
+
+            <!--我在这个组件2里面接收一个list-->
+            <!--在这个里面使用作用域插槽来通过父级来控制组件呈现的效果-->
+            <cmp-two v-else :list="list">
+                <!--使用作用域插槽一定要用template标签,这个标签里面有一个slot-scope属性,后面的属性值list(可以随意起名)就是我从组件里面传过来的值--->
+                <template slot-scope="list">
+                    <!--利用这个list来实现我这个想要这个组件呈现的效果-->
+                    <li>{{list.item}} - {{list.index}}</li>
+                </template>
+            </cmp-two>
+
+            <!--同样利用这个组件2,通过作用域插槽实现不一样的效果-->
+            <cmp-two :list="list">
+                <template slot-scope="list">
+                    <li>{{list.index}} - {{list.item}}</li>
+                </template>
+            </cmp-two>
+        </div>
+        <script>
+            // 创建组件
+            const cmpOne = {
+                // 我想往这个组件1里面放一个插槽,这个插槽表示我的父级在使用我这个组建的时候可以往里面插东西,但是只能插到我的这个插槽里面去,插槽就是solt标签
+                // 当我想要在一个组件里面放入多个插槽的时候,可以往我这个组件里面放入多个具名插槽
+                template: `<div>
+                                <slot name="before"></slot>
+                                组件1: <input type="value">
+                                <slot></slot>
+                                <slot name="after"></slot>
+                           </div>`
+            };
+
+            // 我想让组件里面呈现的状态由父级决定,需要用到作用域插槽
+            const cmpTwo = {
+                // 需要在这个里面也接收数据
+                // 注意插槽里面不能有key值
+                props: ['list'],
+                template: `<div>组件2: <input type="value">
+                               <ul>
+                                  <slot v-for="(item,index) in list"
+                                  :item="item"
+                                  :index="index">
+
+                                  </slot>
+                               </ul>
+                           </div>`
+            };
+
+            const vm = new Vue({
+                el: '#app',
+                components:{
+                    cmpOne,
+                    cmpTwo
+                },
+                data:{
+                    showOne: true,
+                    type:'cmp-one',
+                    list: [1, 2, 3, 4, 5]
+                },
+                methods:{
+                    changeCmp(){
+                        this.showOne = !this.showOne;
+                        this.type = this.type === 'cmp-one' ? 'cmp-two' : 'cmp-one'
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

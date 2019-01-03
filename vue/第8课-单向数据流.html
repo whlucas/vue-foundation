@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        
+    </body>
+</html><!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+            #app{
+                display: inline-block;
+                margin: 20px;
+                border: 1px solid #000;
+                padding: 20px 20px 0 20px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            ul{
+                background-color: red;
+                padding: 30px
+            }
+
+            .course{
+                display: flex;
+                margin-bottom: 20px;
+                background-color: #fff;
+            }
+
+            .img-box {
+                position: relative;
+                margin-right: 20px;
+            }
+
+            .course-img {
+                width: 140px;
+                height: 80px;
+                vertical-align: bottom;
+            }
+
+            .course span{
+                box-sizing: border-box;
+                position: absolute;
+                bottom: 0;
+                display: block;
+                width: 100%;
+                line-height: 20px;
+                padding-left: 10px;
+                color: #fff;
+                font-size: 10px;
+                background-color: rgba(0, 0, 0, .6);
+            }
+
+            .title{
+                width: 250px;
+                box-sizing: border-box;
+                /*文本超出用省略号显示*/
+                text-overflow: ellipsis;
+                /*不换行*/
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            .free{
+                color: #5fb41b;
+            }
+
+            .play-back {
+                display: inline-block;
+                padding: 0 3px;
+                font-size: 12px;
+                border: 1px solid #73b3e7;
+                color: #73b3e7;
+            }
+
+            .price{
+                color: #e85308;
+            }
+
+            .choose {
+                opacity: .3;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <!--我想要在我这个组件上面绑定一个鼠标点击事件,这个事件是写在父级里面的-->
+            <!--有两种方式第一种是必须要加一个事件的修饰.native,告诉他我这是原生的click事件-->
+            <!--第二种不加修饰符,他就认为我这个事件是自定义的事件,需要在组件的内部ul上去绑定这个事件,然后在组件里面的函数去触发这个我自己定义的click事件-->
+            <course-list :list="courseList" @price="getPrice" @click.native="onClick"></course-list>
+            合集: {{price}}
+        </div>
+
+        <script>
+
+            const courseList = {
+                props: {
+
+                    list: {
+                        type: Array,
+                        default: [],
+                        required: true,
+                        validator (value) {
+                            return true
+
+                        }
+                    }
+
+                },
+                data() {
+                    return {
+                        totalPriceArr:[],
+                        alreadyHasArr: [],
+                        totalPrice: 0,
+
+                        // 为了不修改父级传过来的值,在这里定义一个新的接收一下这个传过来的值
+                        // courseList: this.list // 注意这里要写this
+                        // 这一招对非引用值是好使的,引用值不行不行,因为再怎么赋值赋的也是引用值,还是会对父级的数组进行改变
+
+                        // 需要对传进来的数组进行深度克隆,利用concat函数拼接一个空数组即完成数组的深度克隆
+                        courseList: this.list.concat([])
+                    }
+                },
+
+                // 循环的时候循环我这个新定义的值
+                template: `<ul @click="onClick">
+                                <li v-for="(item, index) in courseList"
+                                    :key="item.name"
+                                    @click="addToBuy(index, item.price)"
+                                    @contextmenu.prevent="removeFromBuy(index, item.price)"
+                                    :class="{course:true, choose: alreadyHasArr[index]}">
+                                    <div class="img-box">
+                                        <img class="course-img" :src="item.poster" alt="">
+                                        <span v-if="item.enrollment">{{item.enrollment}}人报名</span>
+                                        <span v-if="item.buyNum">{{item.buyNum}}人购买</span>
+                                    </div>
+                                    <div class="content-box">
+                                        <div class="title">{{item.name}}</div>
+                                        <div class="free" v-if="item.free">免费</div>
+                                        <div class="play-back" v-if="item.playBack">回放</div>
+                                        <div class="price" v-if="item.price">{{item.price}}</div>
+                                    </div>
+                                </li>
+                          </ul>`,
+                methods: {
+                    // 我改一下需求,点击这个li的时候这个li就删除
+                    addToBuy(index, price) {
+                        // if(this.alreadyHasArr[index]){
+                        //     return
+                        // }
+                        // this.totalPriceArr.push(price);
+                        // this.$set(this.alreadyHasArr, index, true)
+                        // this.getTotalPrice()
+
+
+                        // 我只需要拿到这个数据的索引,然后从总的数据里面把他截掉就好了
+                        // this.list.splice(index, 1);
+                        // 但是,如果我这么去改,由于我的数组是从外面传进来的,我在这里改变了数组,那么可能会影响到其他地方对这个数据的使用
+
+                        // 不光不能改数组,父组件传过来的任何值vue都不会让子组件去改变,这个是vue的单向数据流
+                        // 这种情况,我在子组件的data里面定义一个值让他等于我从父组件接过来的值,然后我去修改这个子组件里面定义的这个值
+
+                        // 这种方式对于引用值是不好使的,我去将父级请求过来的值再赋值,赋的还是引用值,改变的时候还是会改变父级的值
+
+                        // 所以我们需要对传进来的数组进行深度克隆
+
+                        // 克隆之后把子组件里面的index项截取掉
+                        this.courseList.splice(index, 1);
+
+
+                    },
+                    removeFromBuy(index, price) {
+
+                        if(!this.alreadyHasArr[index]){
+                            return;
+                        }
+
+
+                        const totalPriceIndex = this.totalPriceArr.findIndex(item => {
+                            return item === price
+                        });
+
+
+                        this.totalPriceArr.splice(totalPriceIndex, 1);
+
+                        this.alreadyHasArr.splice(index, 1, false);
+
+                        this.getTotalPrice()
+                    },
+
+                    getTotalPrice(){
+
+                        if(this.totalPriceArr.length === 0){
+                            this.totalPrice = 0;
+                        }else{
+                            this.totalPrice = this.totalPriceArr.reduce((prev, cur) => {
+                                return prev + cur;
+                            });
+                        }
+
+                        this.$emit('price', this.totalPrice)
+                    },
+                    // 在这里主动触发我这个自己定义的click事件
+                    onClick() {
+                        this.$emit('click');
+                    }
+                }
+            };
+
+            const vm = new Vue({
+                el: '#app',
+
+                components:{
+                    courseList
+                },
+                data:{
+                    price: 0,
+                    courseList:[
+                        {
+                            name: 'Web前端开发之JavaScript(Js)精英课堂【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 4942,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLBsSud06XlZnJACsTWd7OSA5phIFPRTNibFBeuT8jRjy00Jb5ticSEKYUnpUYdBCicH2U/356'
+                        },
+                        {
+                            name: 'Web前端开发之HTML+CSS精英课堂【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 2982,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLBDFLdArBwf70PjMrL6bq0OI9LesEsskk1iamJKibriaic0QkBZhINoDuN0DicaojkqyQjk/356'
+                        },
+                        {
+                            name: '淘宝商城项目实战开发【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 1742,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLDBpXKL1sgAOKcbSz0Od2abiaqdJibiaDDQWfmrVNBCFrIpbTQKlNyWbPg5Uo1dnT7Znk/356'
+                        },
+                        {
+                            name: '零基础WEB前端入门',
+                            free: false,
+                            playback: true,
+                            price: 9.9,
+                            buyNumber: 2514,
+                            enrollment: 0,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLCRlDgtxVbmyclxP9fDUYmnuqAFbN5mYsncrPrVyQbtA3fNfuZ3qicSe1r7Ppt7tICs/356'
+                        },
+                        {
+                            name: 'React顶级企业实战，全流程制作淘票票WebApp【渡一教育】',
+                            free: false,
+                            playback: true,
+                            price: 399,
+                            buyNumber: 670,
+                            enrollment: 0,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLB2CyXIxsb8iaAUibBB9mzlkSgKNU7GiciaYxG1SicoLjkiahZ3ia54eZWbtCGDkFyvMo0uKk/356'
+                        },
+                        {
+                            name: '原生JS贪吃蛇游戏实战开发【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 1123,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLCfsOGnxjhUXFA6SHMOu0fMUicuucRlIVNo9zBnnLiacovMnePD6586QlRj2qvwudbn8/356'
+                        },
+                        {
+                            name: '原生JS扫雷游戏实战开发【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 631,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLDaTljUSVGk2eqS1MCT3DwDqxgs7KhfMf3411SXQkRvmiaicIuz47ydO27zGPWK97wicw/356'
+                        },
+                        {
+                            name: '你不知道的Javascript【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 1696,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLCelo2lyibtrxDia7aq7tC0LE1Lcz2LVoDqhQy5tnOHicTzWhLuvPekL35rEmwTdgNuwI/356'
+                        }
+                    ]
+                },
+                methods: {
+                    getPrice(price) {
+                        this.price = price;
+                    },
+                    onClick() {
+                        console.log(111)
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

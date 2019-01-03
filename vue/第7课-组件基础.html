@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+            #app{
+                display: inline-block;
+                margin: 20px;
+                border: 1px solid #000;
+                padding: 20px 20px 0 20px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .course{
+                display: flex;
+                margin-bottom: 20px;
+            }
+
+            .img-box {
+                position: relative;
+                margin-right: 20px;
+            }
+
+            .course-img {
+                width: 140px;
+                height: 80px;
+                vertical-align: bottom;
+            }
+
+            .course span{
+                box-sizing: border-box;
+                position: absolute;
+                bottom: 0;
+                display: block;
+                width: 100%;
+                line-height: 20px;
+                padding-left: 10px;
+                color: #fff;
+                font-size: 10px;
+                background-color: rgba(0, 0, 0, .6);
+           }
+            
+            .title{
+                width: 250px;
+                box-sizing: border-box;
+                /*文本超出用省略号显示*/
+                text-overflow: ellipsis;
+                /*不换行*/
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            .free{
+                color: #5fb41b;
+            }
+
+            .play-back {
+                display: inline-block;
+                padding: 0 3px;
+                font-size: 12px;
+                border: 1px solid #73b3e7;
+                color: #73b3e7;
+            }
+
+            .price{
+                color: #e85308;
+            }
+
+            .choose {
+                opacity: .3;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <!--在这里监听我这个组件完事之后自己定义的给父级传值的事件price,在这个事件的回调函数getPrice中写对我传过来的值的处理-->
+            <course-list :list="courseList" @price="getPrice"></course-list>
+            合集: {{price}}
+        </div>
+
+        <script>
+            // 介绍一下Vue的组件
+            // 1.全局组件
+            // Vue.component('courseList', { 第一个参数组件的名称,第二个参数是组件的一些配置
+            //     template: `<div>i an a cmp</div>` 这个属性就是我组件里面的内容
+            // })
+            // 使用这个全局组件只需要在需要的地方写一个组件名的标签就可以了，这里是
+            // <course-list></course-list>
+
+            // 2.局部组件
+            // 就是在实例化对象vm里面去注册这个组件
+            // 当我全局组件和局部组件名字相同的时候,使用的是局部组件
+            const courseList = {
+                // 对这个组件需要接收的数据做一个规定,要不然我拿不到我定义的属性里面的数据
+                // props:['list'], // 写了这个之后组件里面就可以用我在组件里面定义的list了
+
+                // props特性 与 非props特性
+                // 如果props里面规定的变量代表能被接收,且可以使用,且不会显示在行间
+                // 如果props里面没有规定的变量不会被接收,不可以使用,且会被显示在行间
+
+
+                // 如果我想对我传进来的数据进行约束,就不能写数组了,要写一个对象
+                props: {
+                    // 这里就规定我这个传进来的list必须要是一个字符串
+                    // list: String
+
+                    // 规定我传进来的是字符串或者是数组都行
+                    // list: [String, Array]
+
+                    // 还可以有更多的规定
+                    list: {
+                        type: Array, // type表示我需要的类型
+                        default: [],  // 设置默认值
+                        required: true, // 规定父组件是不是必须要把这个值传过来,true表示父组件必须传值
+                        validator (value) {  // 这个方法可以对我么你传过来的值做一个校验,这个方法里面可以接受一个参数value
+                            // console.log(value); // 这个value就是从我这个父组件传过来的值
+                            return true // 这个方法必须要让他返回一个东西
+                            // 比如我要规定你给我传的值的长度必须要小于五
+                            // return value.length < 5
+                        }
+                    }
+
+                },
+
+                // 在组件里面写数据,需要写成函数的形式,这个函数要返回一个对象,这个对象就是我我们的数据
+                // 因为这个组件不一定只有一个,如果单单把数据写成一个对象,可能会导致数据名冲突
+                data() {
+                    return {
+                        totalPriceArr:[], // 这个数据存我购买的课程的价格
+                        alreadyHasArr: [], // 这个用来判断我是不是点过这个商品
+                        totalPrice: 0
+                    }
+                },
+
+
+
+                // 把我写好的组件放这个定义的组件里面去,由于前面有了props了,这里可以用到list
+                // 需要用v-if判断需不需要显示
+                // 给li绑定点击事件
+                // 给li添加动态变化的choose类名,运用组件数据里面alreadyHasArr里面的对应index里面的值
+                // 添加右键移除加入购物车事件,.prevent事件修饰符表示取消默认事件
+                template: `<ul>
+                                <li v-for="(item, index) in list"
+                                    :key="item.name"
+                                    @click="addToBuy(index, item.price)"
+                                    @contextmenu.prevent="removeFromBuy(index, item.price)"
+                                    :class="{course:true, choose: alreadyHasArr[index]}">
+                                    <div class="img-box">
+                                        <img class="course-img" :src="item.poster" alt="">
+                                        <span v-if="item.enrollment">{{item.enrollment}}人报名</span>
+                                        <span v-if="item.buyNum">{{item.buyNum}}人购买</span>
+                                    </div>
+                                    <div class="content-box">
+                                        <div class="title">{{item.name}}</div>
+                                        <div class="free" v-if="item.free">免费</div>
+                                        <div class="play-back" v-if="item.playBack">回放</div>
+                                        <div class="price" v-if="item.price">{{item.price}}</div>
+                                    </div>
+                                </li>
+                          </ul>`,
+                // 组件里面的方法要写在组件里面
+                methods: {
+                    addToBuy(index, price) {
+                        // 如果我这个alreadyHasArr里面的index项不是true就什么都不干
+                        if(this.alreadyHasArr[index]){
+                            return
+                        }
+                        this.totalPriceArr.push(price);
+                        // this.alreadyHasArr[index] = true; // 如果走到下面了,就给这个数组的相应位置加上true
+                        // 但是在数组里面这个操作是不能使视图进行改变的,由于我们需要这个值来控制choose类名的变化,所以的需要数组的变异方法,添加这个值
+                        // this.alreadyHasArr.splice(index, 1, true);
+                        // 但是由于我插入的时候一开始没有那么多值,比如我已开始就点第五个,他找不到第五位,就只能从第一位去插入,所以这里还是用set方法
+                        this.$set(this.alreadyHasArr, index, true)
+                        // 计算总价格
+                        this.getTotalPrice()
+
+
+                    },
+                    removeFromBuy(index, price) {
+                        // 如果不在购物车里面就啥也不干
+                        if(!this.alreadyHasArr[index]){
+                            return;
+                        }
+
+                        // 找到我需要移除的价格在数组里面的索引
+                        const totalPriceIndex = this.totalPriceArr.findIndex(item => {
+                            return item === price
+                        });
+
+                        // 把这个商品的价格从这个数组里面移除
+                        this.totalPriceArr.splice(totalPriceIndex, 1);
+                        // 把当前位置的true改成false
+                        this.alreadyHasArr.splice(index, 1, false);
+                        // 重新计算一下价格
+                        this.getTotalPrice()
+                    },
+                    // 写一个计算价格的函数
+                    getTotalPrice(){
+                        // 如果都移除掉了,空数组调用reduce会报错,这里预防一下这个bug
+                        if(this.totalPriceArr.length === 0){
+                            this.totalPrice = 0;
+                        }else{
+                            this.totalPrice = this.totalPriceArr.reduce((prev, cur) => {
+                                return prev + cur;
+                            });
+                        }
+
+                        // 我最后整完了要把这个子组件算出来的值传给父页面
+                        // 用自定义事件的方式传
+                        this.$emit('price', this.totalPrice) // 第一个参数是这个自定义事件的名字,第二个参数是我要传的值
+                    }
+                }
+            };
+
+            const vm = new Vue({
+                el: '#app',
+                // 我来一个组件
+                components:{
+                    // course就是组件名,在对象里面写一些配置,这个对象可以在外面定义,组件的使用方法和全局一样
+                    courseList
+                },
+                data:{
+                    price: 0,
+                    courseList:[
+                        {
+                            name: 'Web前端开发之JavaScript(Js)精英课堂【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 4942,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLBsSud06XlZnJACsTWd7OSA5phIFPRTNibFBeuT8jRjy00Jb5ticSEKYUnpUYdBCicH2U/356'
+                        },
+                        {
+                            name: 'Web前端开发之HTML+CSS精英课堂【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 2982,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLBDFLdArBwf70PjMrL6bq0OI9LesEsskk1iamJKibriaic0QkBZhINoDuN0DicaojkqyQjk/356'
+                        },
+                        {
+                            name: '淘宝商城项目实战开发【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 1742,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLDBpXKL1sgAOKcbSz0Od2abiaqdJibiaDDQWfmrVNBCFrIpbTQKlNyWbPg5Uo1dnT7Znk/356'
+                        },
+                        {
+                            name: '零基础WEB前端入门',
+                            free: false,
+                            playback: true,
+                            price: 9.9,
+                            buyNumber: 2514,
+                            enrollment: 0,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLCRlDgtxVbmyclxP9fDUYmnuqAFbN5mYsncrPrVyQbtA3fNfuZ3qicSe1r7Ppt7tICs/356'
+                        },
+                        {
+                            name: 'React顶级企业实战，全流程制作淘票票WebApp【渡一教育】',
+                            free: false,
+                            playback: true,
+                            price: 399,
+                            buyNumber: 670,
+                            enrollment: 0,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLB2CyXIxsb8iaAUibBB9mzlkSgKNU7GiciaYxG1SicoLjkiahZ3ia54eZWbtCGDkFyvMo0uKk/356'
+                        },
+                        {
+                            name: '原生JS贪吃蛇游戏实战开发【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 1123,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLCfsOGnxjhUXFA6SHMOu0fMUicuucRlIVNo9zBnnLiacovMnePD6586QlRj2qvwudbn8/356'
+                        },
+                        {
+                            name: '原生JS扫雷游戏实战开发【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 631,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLDaTljUSVGk2eqS1MCT3DwDqxgs7KhfMf3411SXQkRvmiaicIuz47ydO27zGPWK97wicw/356'
+                        },
+                        {
+                            name: '你不知道的Javascript【渡一教育】',
+                            free: true,
+                            playback: false,
+                            price: 0,
+                            buyNumber: 0,
+                            enrollment: 1696,
+                            poster: 'https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLCelo2lyibtrxDia7aq7tC0LE1Lcz2LVoDqhQy5tnOHicTzWhLuvPekL35rEmwTdgNuwI/356'
+                        }
+                    ]
+                },
+                methods: {
+                    // 我子组件传过来的值可以用一个参数的形式来接收
+                    getPrice(price) {
+                        // 给父级设置一个data就可以在父级页面中调用了
+                        this.price = price;
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
