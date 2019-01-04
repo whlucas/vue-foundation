@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            {{msg}}
+        </div>
+
+        <div id="app1">
+            {{msg}}
+            <button @click="change">改变数据</button>
+        </div>
+        <script>
+            const vm = new Vue({
+                // 1. el 和 mount函数都可以挂载dom元素
+
+                // 这个被el注册的标签才能使用这个下面的数据
+                // el: '#app',
+                data: {
+                    msg: 'hello world',
+                    red: false,
+                    green: true
+                },
+
+                // 2.template属性意为模板,这个属性在表示插槽的components属性中作为核心属性出现过
+                // 在这个里面写的东西就会作为我这个页面的模板来替换我上面写的dom
+                // 这个替换的过程是这样的
+                // 先把这个字符串String解析成为一个抽象语法树AST({}), 然后把这个AST传入到rander函数里面,通过这个rander函数得到一个虚拟结点VNode,通过这个VNode得到真实的dom
+                // 也就是说我在这个模板里面也可以调用数据
+
+                // new Vue的流程:
+                // 首先初始化 -> 检查有没有el元素 -> 如果有它会看看有没有template模板,如果有模板,就会进行template模板替换dom的操作
+                // 如果el不存在 -> 看看你有没有调用$mount方法 -> 如果有的话看看有没有template,有的话走template
+                // 如果有el,或者$mount,没有template,通过el或者$mount获得挂载的元素,获得挂载元素的outerHTML就是这个dom的字符串,把这个字符串作为一个模板,进行模板的那一套处理
+                // 也就是不管有没有template都会进行template那一套的操作
+                template: '<div>我是一个模板{{msg}}</div>',
+
+                // 3.render函数
+                // 写一个上面提到的render函数
+                // 这个函数接收一个createElement函数,这个函数可以创建VNode结点,这个函数我们一般
+                render(createElement) {
+                    // 通过这个createElement来创建一个div的VNode结点
+                    // 我这里直接return这个函数,发现我这个模板没了,页面里面出现了我return的这个div标签,说明这个render函数的优先级大于template大于el和$mount
+                    // 如果我想给我创建的这个div标签加一些修饰,在第二个参数里面写
+                    // 想给他添加子元素在第三个参数里面写
+                    return createElement('div', {
+                        style:{
+                            border: '1px solid black',
+                            width: '10px',
+                            height: '10px'
+                        },
+                        // class: 'red'
+                        // 添加多个class
+                        // class:['red', 'green']
+                        // 动态绑定class
+                        class: {
+                            red: this.red,
+                            green: this.green
+                        },
+                        // domProps: {
+                        //     innerHTML: 'www' // 这个属性的优先级大于下面的第三个参数
+                        // }
+                    },[
+                        createElement('h1'),
+                        createElement('h2'),
+                        createElement('h3')
+                    ])
+                }
+            });
+
+            // 如果我上面不写el,这边就要用这个方法来注册标签,让这个标签能使用vm里面的数据
+            vm.$mount('#app');
+
+            // 4.vue实例的生命周期
+            // 首先new Vue 然后初始化事件和生命周期函数,然后执行beforeCreate函数
+
+            // 执行完beforeCreate函数之后,就开始初始化data,methods,complate等一些属性,然后执行created函数
+
+            // 准备完事了之后就会去找el属性,没有的话等有没有vm.$mount执行,有其中一个的话,就去看有没有template属性,和上面的操作顺序一样了就
+
+            // 上面的操作完事了之后执行一个beforeMount(挂载前)函数,然后用我生成的vm来替换el标记的dom元素,然后执行mounted(挂载完事)函数,也就是执行完mounted函数,我的vue控制的标签就被显示出来了
+
+            // 挂载完事了之后如果我的这个dom需要更新,它会执行一个跟新前的函数beforeUpdate,然后进行dom的对比和渲染,然后执行updated函数,执行完这个之后数据改变
+
+            // 当我们执行vm.$destroy()这个这个函数的时候它会先执行一个beforeDestroy,然后卸载掉watch监听,子组件,事件监听,然后执行destroyed函数代表被销毁掉了
+            const vm1 = new Vue({
+                el: '#app1',
+                data: {
+                    msg: 'hello'
+                },
+                methods: {
+                    a() {
+                        console.log('aaa');
+                    },
+                    change(){
+                        this.msg = 'iii'
+                    }
+                },
+                beforeCreate(){
+                    // 我在这个里面打印data和methods里面的内容,发现打印不出来,因为在执行这个函数的时候,还啥也没有的呢
+                    console.log('------beforeCreate-----');
+                    console.log(this.msg);
+                    console.log(this.a);
+                    alert('beforeCreate') //这个alert会组织页面继续加载
+                },
+                created() {
+                    // 在创建完成之后打印这些东西就发现有值了
+                    console.log('------Create-----');
+                    console.log(this.msg);
+                    // console.log(this.a);
+                    this.a();
+                    alert('create')
+                },
+                beforeMount() {
+                    alert('beforeMount');
+                },
+                // 执行完这个函数我挂载的dom就被渲染到页面上了
+                mounted() {
+                    alert('mounted');
+                },
+                // 点击按钮之后先执行这个事件
+                beforeUpdate() {
+                    alert('beforeUpdate');
+                },
+                // 再执行这个事件,执行完事之后数据改变
+                Update(){
+                    alert('update');
+                },
+                // 销毁前先执行一下这个函数
+                beforeDestroy() {
+                    alert('beforeDestroy');
+                },
+                // 然后执行这个销毁函数
+                destroyed() {
+                    alert('destroyed')
+                }
+            });
+
+            // 当调用这个vm.$destroy函数的时候开始执行销毁
+            vm1.$destroy();
+            // 销毁之后我这个button绑定的事件就不好使了,点了就没用了
+        </script>
+    </body>
+</html>

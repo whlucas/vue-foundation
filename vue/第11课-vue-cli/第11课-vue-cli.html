@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <script>
+            // 这个vue-cli就是类似webpack的一个工具
+            // 上vue官网 -> 安装 -> 命令行工具 -> 打开vue-cli文档 -> 安装
+
+            // 注意要用cmd
+            // cmd中输入 npm install -g @vue/cli
+
+            // 安装完了就用vue create vue-app 在当前路径下创建一个名为vue-app的vue项目
+            // 然后进行预设,第一个是默认预设,第二个是自己设置的预设,默认预设中第一个是es6转es5的,第二个是检查代码风格的插件
+            // 自己设置
+            // Babel 把es6转成es5
+            // TypeScript
+            // Router 路由
+            // Vuex没有关系的组件传值
+            // CSS Pre-processors css预处理语言
+            // Linter/Formatter 检查代码风格
+            // Unit Testing 单元测试
+            // E2E Testing E2E测试
+
+            // 就选一个bable就行,空格取消或者选中
+
+            // 然后要选择 in dedicate config files 还是 in package.json
+            // 第一个是每一个配置放到一个单独的文件夹里面,第二个是都放到package,json里面,第二个会比较的整齐
+
+            // 然后他会问你是不是要保存这个预设作为未来创建的时候的默认预设
+            // 然后让我们给这个默认预设起一个名字,叫做vue-app
+            // 然后他就会安装一些包
+
+            // 然后按照提示,cd到创建好的路径下面,然后打开服务器
+            // 就会给我们一个端口,我们在网页中打开这个端口
+
+            // 他给我们创建好的这个项目有三个文件夹,第一个就是包,第二个是入口文件,里面有一个html就是那个端口打开的页面
+
+            // src就是写代码的地方,里面的assets文件夹里面放的图片等一些静态资源
+            // components放组件的地方,里面的HelloWorld.vue是一个组件
+            // App.vue也是一个组件,只不过这是一个根组件,main.js是一个主入口配置文件
+            // 这个main.js文件里面我写了一些注释
+
+            // 下面还有一些文件
+            // .gitignore 当我们需要上传到git的时候,这个文件里面写的东西就不会被上传
+            // babel.config.js 配置babel插件的
+            // package.json 就是说明了我们需要的依赖
+
+            // 通过这个vue-cli可以直接运行.vue文件,进入文件夹,输入vue serve 文件名.vue即可,注意要安装一下npm install -g @vue/cli-service-global才好使
+
+
+
+            // 另外一个方式创建vue的项目
+            // 在编辑器里面输入vue ui
+            // 然后就可以在网页上选择目录,创建vue项目,创建的时候包管理工具选择npm
+
+            // 创建好了点任务->serve->运行->启动app
+
+
+            // 一点补充
+            // 如何把我之前设置的预设删了,取到c盘的用户文件夹C:\Users\Administrator
+            // 里面有一个.vuerc文件,把这个文件拽到编辑器里面打开,里面就有一个vue-app的这个属性,就是我之前保存过的预设,把这个删了,然后再保存就好了
+            // 在这个里面还有一个文件夹是.vue-cli-ui,当有这个文件的时候,我每次在cmd中输入vue ui的时候就都会进入我上一次创建的项目,不会让我去新建项目,如果我不想去上一次的项目,想进入新建项目的页面,那我就把这个文件里面的内容都清空,保存
+
+            // 如果我之前是用的cli2版本,如果还想使用2版本的功能 安装一个这个 npm install -g @vue/cli-init
+        </script>
+    </body>
+</html>
