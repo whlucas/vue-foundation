@@ -7,7 +7,7 @@ import Router from 'vue-router'
 // import Community from './views/Community.vue'
 
 // import Academic from './components/community/Academic'
-// import Download from './components/community/Download'
+// import Download.vue from './components/community/Download.vue'
 // import Personal from './components/community/Personal'
 
 // import Question from './components/Question'

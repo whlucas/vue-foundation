@@ -1,0 +1,16 @@
+/*写好了之后去main.js里面引入这个文件就完事了*/
+/*这个里面写的是全局的初始化的样式,对于每一个组件,再去组件里面写样式*/
+* {
+    padding: 0;
+    margin: 0;
+}
+
+ul, li, ol {
+    list-style: none;
+}
+
+/*由于router-link标签默认是a标签,这里重置一下a的样式*/
+a{
+    color: #000;
+    text-decoration: none;
+}
