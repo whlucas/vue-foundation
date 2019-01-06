@@ -21,10 +21,36 @@
             </div>
         </div>
         <router-view class="router-view"/>
+        <!--这里可以展示多个组件,没有写name就是默认展示,写name就是展示配置里面配置的组件-->
+        <router-view class="router-view" name="academic"/>
 
         <div class="footer"></div>  <!--尾部分-->
     </div>
 </template>
+
+<script>
+    export default {
+        // created() {
+        //     this.changeUrl()
+        // },
+        // methods:{
+        //     changeUrl: function(){
+        //         // 默认进入首页
+        //
+        //         // 下面这个会把url分割成["localhost:8080", ""]
+        //         // 取出索引1 如果是空字符串就表示这个是默认的启动页面
+        //         let hrefSplit = window.location.href.split("/")[3];
+        //         console.log(hrefSplit);
+        //         if(hrefSplit === ""){
+        //             // 如果页面是默认启动页面 就给href加一个后缀home
+        //             // location.href就是 http://localhost: 8080/
+        //             window.location.href = window.location.href + "home"
+        //         }
+        //     }
+        // }
+    }
+
+</script>
 
 <style>
     /*当我点击router-link标签的时候它会给我加上这两个class*/
@@ -42,7 +68,7 @@
     /*为了避免这个bug,首页的路径我们不让他是/,改为/home*/
     /*利用这个子路径都会被加上class名的原理,当我们点击community下的子路由的时候二者都会被填上class名*/
     /*也就是说,当我需要父路由和子路由同时都绑上和这个class名的话,子路由的路径必须要是跟着父路由下来的*/
-    .router-link-active{
+    .active{
         border-bottom: 2px solid #fff;
     }
 

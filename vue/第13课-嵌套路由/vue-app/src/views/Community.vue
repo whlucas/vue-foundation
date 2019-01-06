@@ -6,24 +6,27 @@
             <router-link :to="{name: 'download'}">资源下载</router-link>
             <router-link :to="{name: 'personal'}">个人中心</router-link>
         </div>
-        <router-view></router-view>
+        <router-view class="router"></router-view>
     </div>
 </template>
 
 <script>
     export default {
-        name: "Community"
+
     }
 </script>
 
 <style scoped>
-    .nav a{
+    #nav a{
         display: inline-block;
         padding: 5px 10px;
         margin-right: 20px;
     }
-    .rouder-link-active{
+    .active{
         background-color: #000;
         color: #fff;
+    }
+    .router{
+        color: red;
     }
 </style>

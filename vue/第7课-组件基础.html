@@ -180,7 +180,7 @@
                         // 但是在数组里面这个操作是不能使视图进行改变的,由于我们需要这个值来控制choose类名的变化,所以的需要数组的变异方法,添加这个值
                         // this.alreadyHasArr.splice(index, 1, true);
                         // 但是由于我插入的时候一开始没有那么多值,比如我已开始就点第五个,他找不到第五位,就只能从第一位去插入,所以这里还是用set方法
-                        this.$set(this.alreadyHasArr, index, true)
+                        this.$set(this.alreadyHasArr, index, true);
                         // 计算总价格
                         this.getTotalPrice()
 

@@ -30,8 +30,8 @@ Vue.config.productionTip = false;
 //             name: 'about'
 //         }
 //     ],
-//     // 为了让路劲里面没有#/,这里要配置一下
-//     mode: 'history' // 这样卢进里面就没有#/
+//     // 为了让路径里面没有#/,这里要配置一下
+//     mode: 'history' // 这样路径里面就没有#/
 // });
 
 new Vue({
