@@ -14,3 +14,7 @@ a{
     color: #000;
     text-decoration: none;
 }
+button{
+    outline: none;
+    border: none;
+}

@@ -22,7 +22,7 @@
         </div>
         <router-view class="router-view"/>
         <!--这里可以展示多个组件,没有写name就是默认展示,写name就是展示配置里面配置的组件-->
-        <router-view class="router-view" name="academic"/>
+        <!--<router-view class="router-view" name="academic"/>-->
 
         <div class="footer"></div>  <!--尾部分-->
     </div>

@@ -5,10 +5,18 @@ import router from './router'
 // 引入我这个写好的css文件
 import './assets/styles/reset.css'
 
+// 引入vuex
+import store from './store'
+
 Vue.config.productionTip = false;
+
+// 事件总线
+// 在Vue的原型链上加上一个属性,属性值是一个新的Vue实例
+Vue.prototype.bus = new Vue();
 
 new Vue({
   router,
+  store, // 在这里使用vuex,这里也是一个简写
   render: h => h(App)
 }).$mount('#app');
 
@@ -26,3 +34,4 @@ new Vue({
 
 // 把home组件删一删
 // 配置路由router.js
+

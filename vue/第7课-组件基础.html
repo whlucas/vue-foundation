@@ -82,7 +82,7 @@
     </head>
     <body>
         <div id="app">
-            <!--在这里监听我这个组件完事之后自己定义的给父级传值的事件price,在这个事件的回调函数getPrice中写对我传过来的值的处理-->
+            <!--在这里监听我这个组件完事之后,自己定义一个给父级传值的事件price,这个事件在组件里面触发,事件的回调函数getPrice在父级里面写,里面写写对我传过来的值的处理-->
             <!--往组件里面传值在标签上传,传完了在组件里面用props接收一下-->
             <course-list :list="courseList" @price="getPrice"></course-list>
             合集: {{price}}
