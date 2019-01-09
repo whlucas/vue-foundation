@@ -117,10 +117,15 @@
             },
             // 这样写在methods下面就意为着我这个methods下面有一个changeStudent函数,可以直接被标签上面的事件调用,在调用的时候传参,如果我想改名字就传对象
             // ...mapActions(['changeStudent'])
-            ...mapActions({
+            // ...mapActions({
+            //     newStudents: 'changeStudent'
+            // }),
+            // 同样还有一个mapMutataions,用法和上面的这个...mapActions让自己试试,传参怎么传呢
+
+            // 调用我store.js里面归到students里面的方法
+            ...mapActions('student',{
                 newStudents: 'changeStudent'
             })
-            // 同样还有一个mapMutataions,用法和上面的这个...mapActions让自己试试
         }
     }
 </script>

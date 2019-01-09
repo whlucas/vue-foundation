@@ -30,7 +30,10 @@
 
         // 通过计算属性来拿到我数据池里面值
         computed: {
-            ...mapState(['studentList']),
+            // ...mapState(['studentList']),
+
+            // 取到我store.js里面归类到student的数据
+            ...mapState('student',['studentList']),
 
             // 拿到我getters里面对studentList修改之后的属性
             // 之后让li遍历我的newStudent数组就可以实现对每一项进行修改然后显示
@@ -45,7 +48,12 @@
 
             // 他也可以传入对象,传入对象可以改名字,但是和mapState有些不同,key是我起的名字,value直接写在getters里面定义的变量名就可以
             // 最后在li里面传入student
-            ...mapGetters({
+            // ...mapGetters({
+            //     student: 'newStudent'
+            // })
+
+            // 取到我store.js里面归类到student的数据
+            ...mapGetters('student',{
                 student: 'newStudent'
             })
         },

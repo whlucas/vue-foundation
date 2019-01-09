@@ -25,6 +25,9 @@ import Err from './components/Error'
 // 实现这个懒加载的时候,浏览器会把各个模块所需要的东西进行预加载,就是利用浏览器空闲的时间加载到缓存里面去,当我再想要用这些组件的时候就从缓存里面去拿,就会很快
 const Home = () => import('./views/Home');
 
+// 引入修改课程里面的组件
+const ChangeCourse = () => import('./components/ChangeCourse');
+
 Vue.use(Router);
 
 // 这里让这个实例传给一个对象,因为我之后要用到这个实例的方法,然后在最下面把他导出
@@ -145,6 +148,14 @@ const router =  new Router({
             path: '/err.html',
             name: 'err',
             component: Err
+        },
+
+        // 配置learn页面里面的路由
+        {
+            // 我需要在我点击跳转之后这个learn的route-link上还有我点击的样式,所以这里要把这个路径作为learn的子路径
+            path: '/learn/changeCourse',
+            name: 'changeCourse',
+            component: ChangeCourse
         }
     ]
 });

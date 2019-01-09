@@ -79,6 +79,7 @@
 
     /*在这个style里面写我这个组件的样式*/
     .header{
+        width: 100%;
         background-color: #000;
         line-height: 70px;
         padding-bottom: 2px;
@@ -112,8 +113,10 @@
         cursor: pointer;
     }
     .footer{
-        position: fixed;
-        bottom: 0;
+        /*设置了这个层级太高,我在组件里面写的东西容易挤到下面去*/
+        /*要把这个注释一下,然后再组件样式里面设置一个最小高度,就可以把组件撑开了*/
+        /*position: fixed;*/
+        /*bottom: 0;*/
         width: 100%;
         height: 150px;
         background-color: #000;
@@ -121,6 +124,8 @@
     /*调整组件的样式*/
     .router-view{
         width: 1000px;
+        /*把这个组件撑开*/
+        min-height: 500px;
         margin: 0 auto;
         padding-top: 40px;
     }
